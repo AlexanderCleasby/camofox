@@ -2,7 +2,7 @@ apiVersion: v2
 name: camofox
 description: Stealth browser server for AI agents with VNC support
 type: application
-version: 0.1.0
+version: 0.1.3
 appVersion: "1.6.0"
 keywords:
   - browser
