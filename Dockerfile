@@ -7,7 +7,7 @@ FROM node:20-slim
 ARG CAMOUFOX_VERSION=135.0.1
 ARG CAMOUFOX_RELEASE=beta.24
 ARG TARGETARCH
-ARG UPSTREAM_REF=main
+ARG UPSTREAM_REF=master
 
 RUN apt-get update && apt-get install -y \
     git \
