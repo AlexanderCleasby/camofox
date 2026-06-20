@@ -1,0 +1,73 @@
+image:
+  repository: ghcr.io/alexandercleasby/camofox
+  tag: latest
+  pullPolicy: Always
+
+nameOverride: ""
+fullnameOverride: ""
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 9377
+  vncPort: 6080
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+  api:
+    host: camofox.homelab.local
+  vnc:
+    host: camofox-vnc.homelab.local
+  tls: []
+
+vnc:
+  enabled: true
+  # vncPassword set via secrets.vncPassword
+  resolution: "1920x1080"
+  port: 6080
+
+persistence:
+  enabled: true
+  # Omit storageClass to use the cluster default (microk8s: microk8s-hostpath)
+  storageClass: ""
+  size: 5Gi
+  accessMode: ReadWriteOnce
+  # Mount path inside container — camofox writes profiles/cookies/traces here
+  mountPath: /root/.camofox
+
+secrets:
+  # All values end up in a Kubernetes Secret and are injected as env vars.
+  # Set via --set or a values override file — never commit real values here.
+  apiKey: ""       # CAMOFOX_API_KEY   — enables cookie import endpoint
+  accessKey: ""    # CAMOFOX_ACCESS_KEY — bearer token for all routes
+  adminKey: ""     # CAMOFOX_ADMIN_KEY  — required for POST /stop
+  vncPassword: ""  # VNC_PASSWORD
+
+env:
+  CAMOFOX_CRASH_REPORT_ENABLED: "false"
+  MAX_SESSIONS: "10"
+  MAX_TABS_PER_SESSION: "10"
+  SESSION_TIMEOUT_MS: "1800000"
+  BROWSER_IDLE_TIMEOUT_MS: "300000"
+  MAX_OLD_SPACE_SIZE: "256"
+
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 250m
+  limits:
+    memory: 2Gi
+    cpu: "2"
+
+podAnnotations: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -1,0 +1,37 @@
+name: Package and push Helm chart
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  CHART_REPO: ${{ github.repository_owner }}/charts
+
+jobs:
+  helm-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Log in to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io \
+            --username ${{ github.actor }} \
+            --password-stdin
+
+      - name: Package chart
+        run: helm package chart/
+
+      - name: Push chart to GHCR
+        run: |
+          helm push camofox-*.tgz oci://ghcr.io/${{ env.CHART_REPO }}
