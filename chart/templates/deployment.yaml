@@ -18,6 +18,7 @@ spec:
       labels:
         {{- include "camofox.selectorLabels" . | nindent 8 }}
     spec:
+      enableServiceLinks: false
       containers:
         - name: camofox
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
